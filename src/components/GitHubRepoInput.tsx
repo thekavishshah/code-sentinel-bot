@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -88,7 +87,7 @@ export const GitHubRepoInput = ({ onRepositoryAnalyzed }: GitHubRepoInputProps) 
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full border-white/10">
       <CardHeader>
         <CardTitle className="flex items-center">
           <Github className="w-5 h-5 mr-2" />
@@ -104,13 +103,13 @@ export const GitHubRepoInput = ({ onRepositoryAnalyzed }: GitHubRepoInputProps) 
               setRepoUrl(e.target.value);
               setError('');
             }}
-            className="flex-1"
+            className="flex-1 bg-white/15 text-white placeholder:text-gray-400"
             disabled={isAnalyzing}
           />
           <Button 
             onClick={analyzeRepository}
             disabled={isAnalyzing || !repoUrl.trim()}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+            className="bg-gray-600 hover:bg-gray-700"
           >
             {isAnalyzing ? (
               <>
@@ -133,23 +132,23 @@ export const GitHubRepoInput = ({ onRepositoryAnalyzed }: GitHubRepoInputProps) 
           </div>
         )}
 
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-300">
           <p className="mb-3">Enter any public GitHub repository URL to perform real-time AI-powered security analysis of its pull requests.</p>
           <div className="flex flex-wrap gap-2 mb-3">
-            <Badge variant="outline" className="text-xs bg-green-50 border-green-200">
+            <Badge variant="outline" className="text-xs bg-green-50/25 border-green-200/40 text-green-300">
               <CheckCircle className="w-3 h-3 mr-1" />
               Live GitHub API
             </Badge>
-            <Badge variant="outline" className="text-xs bg-blue-50 border-blue-200">
+            <Badge variant="outline" className="text-xs bg-blue-50/25 border-blue-200/40 text-blue-300">
               <CheckCircle className="w-3 h-3 mr-1" />
               Claude AI Analysis
             </Badge>
-            <Badge variant="outline" className="text-xs bg-purple-50 border-purple-200">
+            <Badge variant="outline" className="text-xs bg-purple-50/25 border-purple-200/40 text-purple-300">
               <CheckCircle className="w-3 h-3 mr-1" />
               Real Security Scanning
             </Badge>
           </div>
-          <div className="text-xs text-gray-500 space-y-1">
+          <div className="text-xs text-gray-400 space-y-1">
             <p className="flex items-center">
               <ExternalLink className="w-3 h-3 mr-1" />
               Try: https://github.com/facebook/react
