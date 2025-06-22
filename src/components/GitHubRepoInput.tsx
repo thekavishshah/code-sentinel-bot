@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { GitPullRequest, Github, AlertCircle, CheckCircle, Loader2, ExternalLink } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { githubService } from '@/services/githubService';
 import { useToast } from '@/hooks/use-toast';
 
 interface GitHubRepoInputProps {
@@ -35,27 +35,16 @@ export const GitHubRepoInput = ({ onRepositoryAnalyzed }: GitHubRepoInputProps) 
     setError('');
 
     try {
-      console.log('Starting real GitHub repository analysis...');
+      console.log('Starting GitHub repository analysis with direct API...');
       
       toast({
         title: "Analysis Started",
-        description: "Fetching repository data and analyzing with Claude AI...",
+        description: "Fetching repository data directly from GitHub API...",
       });
       
-      const { data, error: functionError } = await supabase.functions.invoke('analyze-repository', {
-        body: { repoUrl: repoUrl.trim() }
-      });
+      const data = await githubService.getDetailedPullRequests(repoUrl.trim());
 
-      if (functionError) {
-        console.error('Function error:', functionError);
-        throw new Error(functionError.message || 'Failed to analyze repository');
-      }
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      console.log('Real analysis completed:', data);
+      console.log('GitHub analysis completed:', data);
       
       if (data.pullRequests && data.pullRequests.length === 0) {
         toast({
@@ -66,7 +55,7 @@ export const GitHubRepoInput = ({ onRepositoryAnalyzed }: GitHubRepoInputProps) 
       } else {
         toast({
           title: "Analysis Complete",
-          description: `Analyzed ${data.pullRequests?.length || 0} pull requests with AI-powered security scanning.`,
+          description: `Analyzed ${data.pullRequests?.length || 0} pull requests with detailed GitHub data.`,
         });
       }
       

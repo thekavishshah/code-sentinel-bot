@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Brain, Send, Github, Loader2, MessageSquare, FileText, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -186,7 +185,7 @@ export const RAGChatbot = ({ className }: RAGChatbotProps) => {
 
   return (
     <div className={className}>
-      <Card className="h-[600px] flex flex-col">
+      <Card className="h-[600px] flex flex-col max-w-full overflow-hidden">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center">
@@ -271,43 +270,61 @@ export const RAGChatbot = ({ className }: RAGChatbotProps) => {
         {repositoryData && (
           <>
             <Separator />
-            <CardContent className="flex-1 flex flex-col p-0">
+            <CardContent className="flex-1 flex flex-col p-0 h-0">
               {/* Messages Area */}
-              <ScrollArea className="flex-1 p-4">
-                <div className="space-y-4">
+              <div 
+                className="flex-1 p-4 overflow-y-auto custom-scrollbar" 
+                style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#9CA3AF #F3F4F6'
+                }}
+              >
+                <div className="space-y-4 max-w-full overflow-hidden pr-2">
                   {messages.map((message, index) => (
                     <div
                       key={index}
-                      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} w-full`}
                     >
                       <div
-                        className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                        className={`max-w-[80%] min-w-0 rounded-lg px-4 py-2 overflow-hidden ${
                           message.role === 'user'
                             ? 'bg-blue-600 text-white'
                             : 'bg-gray-100 text-gray-900'
                         }`}
                       >
                         {message.role === 'assistant' ? (
-                          <ReactMarkdown 
-                            className="prose prose-sm max-w-none prose-pre:bg-gray-800 prose-pre:text-gray-100"
-                            components={{
-                              code: ({ node, inline, className, children, ...props }: any) => (
-                                inline ? (
-                                  <code className="bg-gray-200 px-1 py-0.5 rounded text-sm" {...props}>
+                          <div className="overflow-hidden">
+                            <ReactMarkdown 
+                              className="prose prose-sm max-w-none prose-pre:bg-gray-800 prose-pre:text-gray-100 prose-code:text-sm prose-pre:overflow-x-auto prose-pre:whitespace-pre-wrap prose-pre:break-words"
+                              components={{
+                                code: ({ node, inline, className, children, ...props }: any) => (
+                                  inline ? (
+                                    <code className="bg-gray-200 px-1 py-0.5 rounded text-sm break-words" {...props}>
+                                      {children}
+                                    </code>
+                                  ) : (
+                                    <code className="block bg-gray-800 text-gray-100 p-3 rounded overflow-x-auto whitespace-pre-wrap break-words text-sm max-w-full" {...props}>
+                                      {children}
+                                    </code>
+                                  )
+                                ),
+                                pre: ({ children, ...props }: any) => (
+                                  <pre className="overflow-x-auto whitespace-pre-wrap break-words max-w-full" {...props}>
                                     {children}
-                                  </code>
-                                ) : (
-                                  <code className="block bg-gray-800 text-gray-100 p-3 rounded" {...props}>
+                                  </pre>
+                                ),
+                                p: ({ children, ...props }: any) => (
+                                  <p className="break-words" {...props}>
                                     {children}
-                                  </code>
+                                  </p>
                                 )
-                              )
-                            }}
-                          >
-                            {message.content}
-                          </ReactMarkdown>
+                              }}
+                            >
+                              {message.content}
+                            </ReactMarkdown>
+                          </div>
                         ) : (
-                          <p className="whitespace-pre-wrap">{message.content}</p>
+                          <p className="whitespace-pre-wrap break-words">{message.content}</p>
                         )}
                         <div className={`text-xs mt-2 ${
                           message.role === 'user' ? 'text-blue-200' : 'text-gray-500'
@@ -331,7 +348,7 @@ export const RAGChatbot = ({ className }: RAGChatbotProps) => {
                   
                   <div ref={messagesEndRef} />
                 </div>
-              </ScrollArea>
+              </div>
 
               {/* Input Area */}
               <div className="border-t p-4">

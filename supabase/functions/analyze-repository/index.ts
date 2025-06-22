@@ -102,10 +102,11 @@ serve(async (req) => {
       return await handleClaudeChat(chatPrompt, maxTokens);
     }
     
-    const githubToken = Deno.env.get('GITHUB_API_KEY');
+    const githubToken = Deno.env.get('GITHUB_API_KEY') || Deno.env.get('VITE_GITHUB_TOKEN');
     const claudeToken = Deno.env.get('CLAUDE_API_KEY');
     
     console.log(`Environment check: GitHub token present: ${!!githubToken}, Claude token present: ${!!claudeToken}`);
+    console.log(`GitHub token starts with: ${githubToken ? githubToken.substring(0, 10) + '...' : 'N/A'}`);
     
     if (!githubToken) {
       throw new Error('GitHub API key not configured');
@@ -177,6 +178,27 @@ serve(async (req) => {
       prsData.slice(0, 5).map(async (pr) => {
         try {
           console.log(`Analyzing PR #${pr.number}: ${pr.title}`);
+          
+          // Fetch detailed PR info to get accurate additions/deletions
+          const detailedPrResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls/${pr.number}`, {
+            headers: {
+              'Authorization': `Bearer ${githubToken}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'PR-Guardian-AI',
+            },
+          });
+
+          let detailedPrData = pr;
+          if (detailedPrResponse.ok) {
+            detailedPrData = await detailedPrResponse.json();
+            console.log(`Detailed PR data for #${pr.number}:`, {
+              additions: detailedPrData.additions,
+              deletions: detailedPrData.deletions,
+              changed_files: detailedPrData.changed_files
+            });
+          } else {
+            console.error(`Failed to fetch detailed PR data for #${pr.number}: ${detailedPrResponse.status}`);
+          }
           
           // Fetch PR files/diff
           const filesResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls/${pr.number}/files`, {
@@ -304,32 +326,50 @@ Focus on:
 
           enhancedRiskScore = Math.min(100, enhancedRiskScore);
 
-          return {
-            id: pr.number,
-            title: pr.title,
-            author: pr.user.login,
+          const returnData = {
+            id: detailedPrData.number,
+            title: detailedPrData.title,
+            author: detailedPrData.user.login,
             status: enhancedRiskScore > 80 ? 'blocked' : enhancedRiskScore > 50 ? 'risky' : 'safe',
-            filesChanged: pr.changed_files,
-            additions: pr.additions,
-            deletions: pr.deletions,
+            filesChanged: detailedPrData.changed_files,
+            additions: detailedPrData.additions,
+            deletions: detailedPrData.deletions,
             riskScore: enhancedRiskScore,
-            url: pr.html_url,
+            url: detailedPrData.html_url,
+            mergeable_state: detailedPrData.mergeable_state,
+            state: detailedPrData.state,
             checks: {
-              conflicts: pr.mergeable_state === 'dirty',
-              testCoverage: Math.floor(Math.random() * 40) + 60, // Simulated
-              linting: Math.random() > 0.2,
+              conflicts: pr.mergeable_state === 'dirty' || pr.mergeable_state === 'conflicted',
+              testCoverage: Math.floor(Math.random() * 40) + 60, // This would need actual test coverage data
+              linting: Math.random() > 0.2, // This would need actual linting results
               security: analysis.securityIssues.length,
               semanticRisk: enhancedRiskScore > 70 ? "high" : enhancedRiskScore > 40 ? "medium" : "low"
             },
-            securityIssues: analysis.securityIssues.map(issue => ({
+            securityIssues: analysis.securityIssues.map((issue, index) => ({
               type: issue.type || 'unknown',
-              file: riskyFiles[0]?.filename || 'unknown',
-              line: Math.floor(Math.random() * 100) + 1,
+              file: fileChanges[index % fileChanges.length]?.filename || 'unknown',
+              line: Math.floor(Math.random() * 100) + 1, // Would need actual line numbers from diff
               severity: issue.severity || 'medium'
             })),
             aiSummary: analysis.summary,
-            recommendations: analysis.recommendations
+            recommendations: analysis.recommendations,
+            fileChanges: fileChanges.map(file => ({
+              filename: file.filename,
+              additions: file.additions,
+              deletions: file.deletions,
+              changes: file.changes,
+              status: file.status,
+              patch: file.patch
+            }))
           };
+          
+          console.log(`Returning PR data for #${returnData.id}:`, {
+            additions: returnData.additions,
+            deletions: returnData.deletions,
+            filesChanged: returnData.filesChanged
+          });
+          
+          return returnData;
         } catch (error) {
           console.error(`Error analyzing PR ${pr.number}:`, error);
           return {

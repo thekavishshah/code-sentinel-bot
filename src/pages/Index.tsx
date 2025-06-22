@@ -23,77 +23,30 @@ const Index = () => {
   const [analyzationHistory, setAnalyzationHistory] = useState<any[]>([]);
   const { toast } = useToast();
   
-  // Default mock PRs for demo
-  const defaultMockPRs = [
-    {
-      id: 1,
-      title: "Add user authentication with JWT tokens",
-      author: "alex_dev",
-      status: "risky",
-      filesChanged: 12,
-      additions: 245,
-      deletions: 67,
-      riskScore: 75,
-      checks: {
-        conflicts: false,
-        testCoverage: 85,
-        linting: true,
-        security: 2,
-        semanticRisk: "medium"
-      },
-      securityIssues: [
-        { type: "hardcoded_secret", file: "auth.js", line: 23, severity: "high" },
-        { type: "weak_crypto", file: "jwt.js", line: 45, severity: "medium" }
-      ],
-      aiSummary: "This PR introduces JWT authentication but contains security vulnerabilities. The hardcoded secret key poses a significant risk. Code structure is well-organized but needs security improvements."
-    },
-    {
-      id: 2,
-      title: "Fix responsive design for mobile dashboard",
-      author: "sarah_ui",
-      status: "safe",
-      filesChanged: 4,
-      additions: 89,
-      deletions: 23,
-      riskScore: 25,
-      checks: {
-        conflicts: false,
-        testCoverage: 92,
-        linting: true,
-        security: 0,
-        semanticRisk: "low"
-      },
-      securityIssues: [],
-      aiSummary: "Low-risk UI changes that improve mobile experience. No security concerns, good test coverage, and follows established patterns."
-    },
-    {
-      id: 3,
-      title: "Refactor database connection pool",
-      author: "mike_backend",
-      status: "blocked",
-      filesChanged: 8,
-      additions: 156,
-      deletions: 203,
-      riskScore: 95,
-      checks: {
-        conflicts: true,
-        testCoverage: 45,
-        linting: false,
-        security: 1,
-        semanticRisk: "high"
-      },
-      securityIssues: [
-        { type: "sql_injection", file: "database.js", line: 78, severity: "critical" }
-      ],
-      aiSummary: "High-risk database changes with merge conflicts and critical security vulnerabilities. Requires immediate attention and additional review."
-    }
-  ];
-
-  // Use current PRs if available, otherwise use default
-  const mockPRs = currentPRs.length > 0 ? currentPRs : defaultMockPRs;
+  // Show message when no repository is selected
+  const showEmptyState = !currentRepository;
+  
+  // Use current PRs if available, otherwise empty array
+  const mockPRs = currentPRs.length > 0 ? currentPRs : [];
   const currentPR = mockPRs[selectedPR];
+  
+  // Debug current PR data
+  React.useEffect(() => {
+    if (currentPR) {
+      console.log('Current PR data:', currentPR);
+      console.log('Additions:', currentPR.additions);
+      console.log('Deletions:', currentPR.deletions);
+      console.log('Files changed:', currentPR.filesChanged);
+    }
+  }, [currentPR]);
 
   const handleRepositoryAnalyzed = (repoData: any) => {
+    console.log('Repository analyzed, received data:', repoData);
+    console.log('Pull requests:', repoData.pullRequests);
+    if (repoData.pullRequests && repoData.pullRequests.length > 0) {
+      console.log('First PR data:', repoData.pullRequests[0]);
+    }
+    
     setCurrentRepository(repoData.repository);
     setCurrentPRs(repoData.pullRequests);
     setSelectedPR(0); // Select first PR
@@ -246,7 +199,14 @@ const Index = () => {
                 )}
               </CardHeader>
               <CardContent className="space-y-3">
-                {mockPRs.map((pr, index) => (
+                {mockPRs.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    <GitPullRequest className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                    <p className="text-sm">No pull requests to analyze</p>
+                    <p className="text-xs">Analyze a GitHub repository to view its pull requests</p>
+                  </div>
+                ) : (
+                  mockPRs.map((pr, index) => (
                   <div
                     key={pr.id}
                     onClick={() => setSelectedPR(index)}
@@ -280,7 +240,8 @@ const Index = () => {
                       </span>
                     </div>
                   </div>
-                ))}
+                  ))
+                )}
               </CardContent>
             </Card>
             
@@ -305,8 +266,10 @@ const Index = () => {
           {/* Main Content */}
           <div className="xl:col-span-3">
             <div className="space-y-6">
-              {/* PR Header */}
-              <Card>
+              {currentPR ? (
+                <>
+                  {/* PR Header */}
+                  <Card>
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="space-y-2">
@@ -341,15 +304,15 @@ const Index = () => {
                 <CardContent>
                   <div className="grid grid-cols-3 gap-6 mb-6">
                     <div className="text-center">
-                      <div className="text-lg font-semibold text-green-600">+{currentPR.additions}</div>
+                      <div className="text-lg font-semibold text-green-600">+{currentPR.additions || 0}</div>
                       <p className="text-sm text-gray-500">Additions</p>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-semibold text-red-600">-{currentPR.deletions}</div>
+                      <div className="text-lg font-semibold text-red-600">-{currentPR.deletions || 0}</div>
                       <p className="text-sm text-gray-500">Deletions</p>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-semibold text-blue-600">{currentPR.filesChanged}</div>
+                      <div className="text-lg font-semibold text-blue-600">{currentPR.filesChanged || 0}</div>
                       <p className="text-sm text-gray-500">Files Changed</p>
                     </div>
                   </div>
@@ -432,9 +395,21 @@ const Index = () => {
                 </TabsContent>
 
                 <TabsContent value="recommendations">
-                  <RecommendationPanel pr={currentPR} />
+                  <RecommendationPanel pr={currentPR} repositoryUrl={currentRepository?.url || ''} />
                 </TabsContent>
               </Tabs>
+                </>
+              ) : (
+                <Card className="h-96">
+                  <CardContent className="flex items-center justify-center h-full">
+                    <div className="text-center text-gray-500">
+                      <Shield className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">No Repository Selected</h3>
+                      <p className="text-sm">Analyze a GitHub repository to view pull request analysis, security insights, and AI-powered recommendations.</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </div>
         </div>
