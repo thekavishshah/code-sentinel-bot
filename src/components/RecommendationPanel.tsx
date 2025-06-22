@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,14 +10,52 @@ import {
   Code, 
   Shield, 
   Clock,
-  ArrowRight
+  ArrowRight,
+  Send,
+  Loader2
 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface RecommendationPanelProps {
   pr: any;
 }
 
 export const RecommendationPanel = ({ pr }: RecommendationPanelProps) => {
+  const { toast } = useToast();
+  const [requestedReviewers, setRequestedReviewers] = useState<string[]>([]);
+  const [loadingReviewers, setLoadingReviewers] = useState<string[]>([]);
+
+  const handleRequestReview = async (reviewer: any) => {
+    setLoadingReviewers([...loadingReviewers, reviewer.name]);
+    try {
+      const { error } = await supabase.functions.invoke('request-review', {
+        body: { 
+          owner: pr.owner,
+          repo: pr.repo,
+          pull_number: pr.number,
+          reviewer: reviewer.githubUsername
+        }
+      });
+
+      if (error) throw error;
+
+      setRequestedReviewers([...requestedReviewers, reviewer.name]);
+      toast({
+        title: "Review Request Sent",
+        description: `A real GitHub notification has been sent to ${reviewer.name}.`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Failed to Send Request",
+        description: error.message || "An unknown error occurred.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingReviewers(prev => prev.filter(name => name !== reviewer.name));
+    }
+  };
+
   const getRecommendations = () => {
     const recommendations = [];
 
@@ -84,6 +121,30 @@ export const RecommendationPanel = ({ pr }: RecommendationPanelProps) => {
 
     return recommendations;
   };
+
+  const suggestedReviewers = [
+    {
+      name: 'Sarah Chen',
+      role: 'Senior Security Engineer',
+      avatar: 'https://i.pravatar.cc/150?u=sarah',
+      reason: 'Security expertise',
+      githubUsername: 'sarahc'
+    },
+    {
+      name: 'Mike Rodriguez',
+      role: 'Database Architect',
+      avatar: 'https://i.pravatar.cc/150?u=mike',
+      reason: 'Database changes',
+      githubUsername: 'mikerod'
+    },
+    {
+      name: 'Alex Kim',
+      role: 'DevOps Lead',
+      avatar: 'https://i.pravatar.cc/150?u=alex',
+      reason: 'Infrastructure impact',
+      githubUsername: 'alexk'
+    }
+  ];
 
   const recommendations = getRecommendations();
 
@@ -181,7 +242,7 @@ export const RecommendationPanel = ({ pr }: RecommendationPanelProps) => {
                       <p className="text-xs text-gray-500">{rec.description}</p>
                     </div>
                   </div>
-                  <Button size="sm" variant="outline">
+                  <Button size="sm" variant="outline" className="bg-gray-100 text-gray-800">
                     {rec.action}
                   </Button>
                 </div>
@@ -200,25 +261,39 @@ export const RecommendationPanel = ({ pr }: RecommendationPanelProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {[
-              { name: 'Sarah Chen', role: 'Senior Security Engineer', reason: 'Security expertise', avatar: '👩‍💻' },
-              { name: 'Mike Rodriguez', role: 'Database Architect', reason: 'Database changes', avatar: '👨‍💼' },
-              { name: 'Alex Kim', role: 'DevOps Lead', reason: 'Infrastructure impact', avatar: '👨‍💻' }
-            ].map((reviewer, index) => (
-              <div key={index} className="flex items-center justify-between p-3 rounded-lg border border-gray-100">
+          <div className="space-y-4">
+            {suggestedReviewers.map((reviewer, index) => (
+              <div key={index} className="flex items-center justify-between p-4 rounded-lg border border-gray-100">
                 <div className="flex items-center space-x-3">
-                  <div className="text-2xl">{reviewer.avatar}</div>
+                  <img src={reviewer.avatar} alt={reviewer.name} className="w-10 h-10 rounded-full" />
                   <div>
-                    <p className="font-medium text-sm">{reviewer.name}</p>
+                    <h4 className="font-medium text-sm">{reviewer.name}</h4>
                     <p className="text-xs text-gray-500">{reviewer.role}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-gray-500 mb-1">{reviewer.reason}</p>
-                  <Button size="sm" variant="outline">
-                    Request Review
-                  </Button>
+                  {requestedReviewers.includes(reviewer.name) ? (
+                    <Button size="sm" variant="outline" disabled className="bg-green-100 text-green-700">
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Requested
+                    </Button>
+                  ) : loadingReviewers.includes(reviewer.name) ? (
+                    <Button size="sm" variant="outline" disabled>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Requesting...
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="bg-gray-100 text-gray-800"
+                      onClick={() => handleRequestReview(reviewer)}
+                    >
+                      <Send className="w-4 h-4 mr-2" />
+                      Request Review
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}
