@@ -13,6 +13,7 @@ import { RecommendationPanel } from '@/components/RecommendationPanel';
 import { GitHubRepoInput } from '@/components/GitHubRepoInput';
 import { RepositoryInfo } from '@/components/RepositoryInfo';
 import { AnalyzationHistory } from '@/components/AnalyzationHistory';
+import { RAGChatbot } from '@/components/RAGChatbot';
 import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
@@ -391,37 +392,43 @@ const Index = () => {
                 </TabsContent>
 
                 <TabsContent value="analysis" className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center">
-                        <Brain className="w-5 h-5 mr-2" />
-                        AI-Powered Code Analysis
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="prose max-w-none">
-                        <p className="text-gray-700 leading-relaxed">{currentPR.aiSummary}</p>
-                      </div>
-                      <Separator className="my-4" />
-                      <div className="space-y-3">
-                        <h4 className="font-semibold text-gray-900">Key Insights</h4>
-                        <ul className="space-y-2 text-sm">
-                          <li className="flex items-start">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                            <span>Code complexity analysis shows moderate changes to critical authentication flow</span>
-                          </li>
-                          <li className="flex items-start">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                            <span>Semantic similarity check with existing patterns shows 78% consistency</span>
-                          </li>
-                          <li className="flex items-start">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                            <span>Impact analysis suggests potential breaking changes for legacy clients</span>
-                          </li>
-                        </ul>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Original AI Analysis */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center">
+                          <Brain className="w-5 h-5 mr-2" />
+                          Pull Request Analysis
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="prose max-w-none">
+                          <p className="text-gray-700 leading-relaxed">{currentPR.aiSummary}</p>
+                        </div>
+                        <Separator className="my-4" />
+                        <div className="space-y-3">
+                          <h4 className="font-semibold text-gray-900">Key Insights</h4>
+                          <ul className="space-y-2 text-sm">
+                            <li className="flex items-start">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                              <span>Code complexity analysis shows moderate changes to critical authentication flow</span>
+                            </li>
+                            <li className="flex items-start">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                              <span>Semantic similarity check with existing patterns shows 78% consistency</span>
+                            </li>
+                            <li className="flex items-start">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                              <span>Impact analysis suggests potential breaking changes for legacy clients</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* RAG Chatbot */}
+                    <RAGChatbot />
+                  </div>
                 </TabsContent>
 
                 <TabsContent value="recommendations">
