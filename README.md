@@ -1,4 +1,4 @@
-# 🛡️ Code Sentinel Bot
+# 🛡️ Code Sentinel
 
   An intelligent AI-powered GitHub repository security analyzer that
   provides comprehensive pull request analysis, risk assessment, and
