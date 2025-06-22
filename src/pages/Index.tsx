@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import { GitPullRequest, Shield, AlertTriangle, CheckCircle, X, Users, FileText, Code, Lock, Brain } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { GitPullRequest, Shield, AlertTriangle, CheckCircle, X, Users, FileText, Code, Lock, Brain, History } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,11 +12,15 @@ import { RiskAssessment } from '@/components/RiskAssessment';
 import { RecommendationPanel } from '@/components/RecommendationPanel';
 import { GitHubRepoInput } from '@/components/GitHubRepoInput';
 import { RepositoryInfo } from '@/components/RepositoryInfo';
+import { AnalyzationHistory } from '@/components/AnalyzationHistory';
+import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
   const [selectedPR, setSelectedPR] = useState(0);
   const [currentRepository, setCurrentRepository] = useState<any>(null);
   const [currentPRs, setCurrentPRs] = useState<any[]>([]);
+  const [analyzationHistory, setAnalyzationHistory] = useState<any[]>([]);
+  const { toast } = useToast();
   
   // Default mock PRs for demo
   const defaultMockPRs = [
@@ -93,7 +96,89 @@ const Index = () => {
     setCurrentRepository(repoData.repository);
     setCurrentPRs(repoData.pullRequests);
     setSelectedPR(0); // Select first PR
+    
+    // Add to analyzation history
+    if (repoData.repository) {
+      const newHistoryItem = {
+        id: Date.now(),
+        repository: repoData.repository,
+        timestamp: new Date().toISOString(),
+        prCount: repoData.pullRequests?.length || 0
+      };
+      
+      setAnalyzationHistory(prev => [newHistoryItem, ...prev]);
+      
+      // Store in localStorage
+      const history = JSON.parse(localStorage.getItem('analyzationHistory') || '[]');
+      localStorage.setItem('analyzationHistory', JSON.stringify([newHistoryItem, ...history].slice(0, 10)));
+    }
   };
+  
+  const handleAddDemoRepo = () => {
+    // Create a demo repository entry
+    const demoRepos = [
+      {
+        name: "react",
+        owner: "facebook",
+        url: "https://github.com/facebook/react",
+        language: "JavaScript",
+        stars: 212000,
+        forks: 44500,
+        openPRs: 3
+      },
+      {
+        name: "vscode",
+        owner: "microsoft",
+        url: "https://github.com/microsoft/vscode",
+        language: "TypeScript",
+        stars: 152000,
+        forks: 28300,
+        openPRs: 5
+      },
+      {
+        name: "tensorflow",
+        owner: "tensorflow",
+        url: "https://github.com/tensorflow/tensorflow",
+        language: "C++",
+        stars: 178000,
+        forks: 89000,
+        openPRs: 4
+      }
+    ];
+    
+    // Pick a random demo repo
+    const randomRepo = demoRepos[Math.floor(Math.random() * demoRepos.length)];
+    
+    // Create a history item
+    const demoHistoryItem = {
+      id: Date.now(),
+      repository: randomRepo,
+      timestamp: new Date().toISOString(),
+      prCount: randomRepo.openPRs
+    };
+    
+    // Add to history
+    setAnalyzationHistory(prev => [demoHistoryItem, ...prev]);
+    
+    // Store in localStorage
+    const history = JSON.parse(localStorage.getItem('analyzationHistory') || '[]');
+    localStorage.setItem('analyzationHistory', JSON.stringify([demoHistoryItem, ...history].slice(0, 10)));
+    
+    // Show toast notification
+    toast({
+      title: "Demo Repository Added",
+      description: `Added ${randomRepo.name} by ${randomRepo.owner} to your history.`,
+      variant: "default",
+    });
+  };
+
+  // Load history from localStorage on component mount
+  useEffect(() => {
+    const savedHistory = localStorage.getItem('analyzationHistory');
+    if (savedHistory) {
+      setAnalyzationHistory(JSON.parse(savedHistory));
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -132,73 +217,88 @@ const Index = () => {
         )}
 
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
-          {/* PR List Sidebar */}
-          <div className="xl:col-span-1">
-            <div className="space-y-4">
-              {currentRepository && (
-                <RepositoryInfo repository={currentRepository} />
-              )}
-              
-              <Card className="h-fit">
-                <CardHeader>
-                  <CardTitle className="flex items-center text-lg">
-                    <GitPullRequest className="w-5 h-5 mr-2" />
-                    {currentRepository ? `${currentRepository.name} PRs` : 'Active PRs'}
-                  </CardTitle>
-                  {currentRepository && (
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={() => {
-                        setCurrentRepository(null);
-                        setCurrentPRs([]);
-                        setSelectedPR(0);
-                      }}
-                      className="text-xs"
-                    >
-                      Analyze Different Repo
-                    </Button>
-                  )}
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {mockPRs.map((pr, index) => (
-                    <div
-                      key={pr.id}
-                      onClick={() => setSelectedPR(index)}
-                      className={`p-4 rounded-lg border cursor-pointer transition-all ${
-                        selectedPR === index 
-                          ? 'border-blue-500 bg-blue-50' 
-                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <Badge
-                          variant={pr.status === 'safe' ? 'default' : pr.status === 'risky' ? 'secondary' : 'destructive'}
-                          className={
-                            pr.status === 'safe' 
-                              ? 'bg-green-100 text-green-800 hover:bg-green-100' 
-                              : pr.status === 'risky' 
-                              ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100' 
-                              : 'bg-red-100 text-red-800 hover:bg-red-100'
-                          }
-                        >
-                          {pr.status.toUpperCase()}
-                        </Badge>
-                        <span className="text-sm text-gray-500">#{pr.id}</span>
-                      </div>
-                      <h4 className="font-medium text-sm mb-1 line-clamp-2">{pr.title}</h4>
-                      <p className="text-xs text-gray-500">by {pr.author}</p>
-                      <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
-                        <span>{pr.filesChanged} files</span>
-                        <span className="flex items-center">
-                          Risk: {pr.riskScore}%
-                        </span>
-                      </div>
+          {/* Left Sidebar */}
+          <div className="xl:col-span-1 space-y-4">
+            {currentRepository && (
+              <RepositoryInfo repository={currentRepository} />
+            )}
+            
+            <Card className="h-fit">
+              <CardHeader>
+                <CardTitle className="flex items-center text-lg">
+                  <GitPullRequest className="w-5 h-5 mr-2" />
+                  {currentRepository ? `${currentRepository.name} PRs` : 'Active PRs'}
+                </CardTitle>
+                {currentRepository && (
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => {
+                      setCurrentRepository(null);
+                      setCurrentPRs([]);
+                      setSelectedPR(0);
+                    }}
+                    className="text-xs"
+                  >
+                    Analyze Different Repo
+                  </Button>
+                )}
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {mockPRs.map((pr, index) => (
+                  <div
+                    key={pr.id}
+                    onClick={() => setSelectedPR(index)}
+                    className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                      selectedPR === index 
+                        ? 'border-blue-500 bg-blue-50' 
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <Badge
+                        variant={pr.status === 'safe' ? 'default' : pr.status === 'risky' ? 'secondary' : 'destructive'}
+                        className={
+                          pr.status === 'safe' 
+                            ? 'bg-green-100 text-green-800 hover:bg-green-100' 
+                            : pr.status === 'risky' 
+                            ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100' 
+                            : 'bg-red-100 text-red-800 hover:bg-red-100'
+                        }
+                      >
+                        {pr.status.toUpperCase()}
+                      </Badge>
+                      <span className="text-sm text-gray-500">#{pr.id}</span>
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </div>
+                    <h4 className="font-medium text-sm mb-1 line-clamp-2">{pr.title}</h4>
+                    <p className="text-xs text-gray-500">by {pr.author}</p>
+                    <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+                      <span>{pr.filesChanged} files</span>
+                      <span className="flex items-center">
+                        Risk: {pr.riskScore}%
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+            
+            {/* Analyzation History */}
+            <AnalyzationHistory 
+              history={analyzationHistory}
+              onSelectRepository={(historyItem) => {
+                // Handle selecting a repository from history
+                // This would typically re-fetch the data or use cached data
+                if (historyItem.repository) {
+                  setCurrentRepository(historyItem.repository);
+                }
+              }}
+              onClearHistory={() => {
+                setAnalyzationHistory([]);
+                localStorage.removeItem('analyzationHistory');
+              }}
+              onAddDemoRepo={handleAddDemoRepo}
+            />
           </div>
 
           {/* Main Content */}
