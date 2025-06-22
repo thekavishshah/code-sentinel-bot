@@ -266,12 +266,4 @@
   l-bot/discussions) for questions
   - Follow the project for updates
 
-  ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-  ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=ty
-  pescript&logoColor=white)
-  ![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoCo
-  lor=black)
-  ![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&
-  logoColor=white)
-
   ---
