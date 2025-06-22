@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 interface RiskAssessmentProps {
   pr: any;
@@ -61,19 +61,40 @@ export const RiskAssessment = ({ pr }: RiskAssessmentProps) => {
       <CardContent>
         <div className="space-y-6">
           {riskFactors.map((factor, index) => (
-            <div key={index} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <span className="font-medium text-sm">{factor.name}</span>
-                  {getTrendIcon(factor.trend)}
+            <Dialog key={index}>
+              <DialogTrigger asChild>
+                <div
+                  className="space-y-2 cursor-pointer border border-transparent rounded-lg transition-colors hover:border-purple-500 focus:border-purple-600 outline-none"
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`Show details for ${factor.name}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="font-medium text-sm">{factor.name}</span>
+                      {getTrendIcon(factor.trend)}
+                    </div>
+                    <span className={`font-semibold text-sm ${getScoreColor(factor.score)}`}>
+                      {factor.score}%
+                    </span>
+                  </div>
+                  <Progress value={factor.score} className="h-2" />
+                  <p className="text-xs text-gray-500">{factor.description}</p>
                 </div>
-                <span className={`font-semibold text-sm ${getScoreColor(factor.score)}`}>
-                  {factor.score}%
-                </span>
-              </div>
-              <Progress value={factor.score} className="h-2" />
-              <p className="text-xs text-gray-500">{factor.description}</p>
-            </div>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>{factor.name} Details</DialogTitle>
+                  <DialogDescription>
+                    <div className="mt-2 text-sm text-gray-700">
+                      <p><strong>Score:</strong> {factor.score}%</p>
+                      <p><strong>Description:</strong> {factor.description}</p>
+                      <p className="mt-2 italic text-purple-700">(Detailed information about {factor.name} will appear here.)</p>
+                    </div>
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
           ))}
           
           <div className="pt-4 border-t">

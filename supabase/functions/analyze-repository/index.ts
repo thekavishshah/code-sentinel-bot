@@ -128,7 +128,7 @@ serve(async (req) => {
       headers: {
         'Authorization': `Bearer ${githubToken}`,
         'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'PR-Guardian-AI',
+        'User-Agent': 'DevQ',
       },
     });
 
@@ -146,7 +146,7 @@ serve(async (req) => {
       headers: {
         'Authorization': `Bearer ${githubToken}`,
         'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'PR-Guardian-AI',
+        'User-Agent': 'DevQ',
       },
     });
 
@@ -184,7 +184,7 @@ serve(async (req) => {
             headers: {
               'Authorization': `Bearer ${githubToken}`,
               'Accept': 'application/vnd.github.v3+json',
-              'User-Agent': 'PR-Guardian-AI',
+              'User-Agent': 'DevQ',
             },
           });
 
@@ -205,7 +205,7 @@ serve(async (req) => {
             headers: {
               'Authorization': `Bearer ${githubToken}`,
               'Accept': 'application/vnd.github.v3+json',
-              'User-Agent': 'PR-Guardian-AI',
+              'User-Agent': 'DevQ',
             },
           });
 

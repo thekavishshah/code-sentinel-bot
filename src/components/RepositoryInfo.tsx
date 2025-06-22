@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -41,7 +40,7 @@ export const RepositoryInfo = ({ repository }: RepositoryInfoProps) => {
             <h3 className="text-lg font-semibold text-gray-900">
               {repository.owner}/{repository.name}
             </h3>
-            <p className="text-sm text-gray-600">{repository.url}</p>
+            <p className="text-sm text-gray-600 break-all overflow-hidden">{repository.url}</p>
           </div>
           
           <div className="flex flex-wrap gap-2">
