@@ -11,9 +11,10 @@ import ReactMarkdown from 'react-markdown';
 
 interface RAGChatbotProps {
   className?: string;
+  repositoryUrl?: string;
 }
 
-export const RAGChatbot = ({ className }: RAGChatbotProps) => {
+export const RAGChatbot = ({ className, repositoryUrl }: RAGChatbotProps) => {
   const [repoUrl, setRepoUrl] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
@@ -24,6 +25,18 @@ export const RAGChatbot = ({ className }: RAGChatbotProps) => {
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  // Auto-set repository URL when provided via props
+  useEffect(() => {
+    if (repositoryUrl && repositoryUrl !== repoUrl) {
+      setRepoUrl(repositoryUrl);
+      // Reset state when repository changes
+      if (repositoryData) {
+        setRepositoryData(null);
+        setMessages([]);
+      }
+    }
+  }, [repositoryUrl]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -212,40 +225,70 @@ export const RAGChatbot = ({ className }: RAGChatbotProps) => {
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="flex space-x-2">
-                <Input
-                  placeholder="https://github.com/octocat/Hello-World"
-                  value={repoUrl}
-                  onChange={(e) => {
-                    setRepoUrl(e.target.value);
-                    setError('');
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleKeyPress(e as any);
-                    }
-                  }}
-                  className="flex-1"
-                  disabled={isIngesting}
-                />
-                <Button 
-                  onClick={handleIngestRepository}
-                  disabled={isIngesting || !repoUrl.trim()}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-                >
-                  {isIngesting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Ingesting...
-                    </>
-                  ) : (
-                    <>
-                      <Brain className="w-4 h-4 mr-2" />
-                      Analyze Repository
-                    </>
-                  )}
-                </Button>
-              </div>
+              {/* Show repository URL if provided via props */}
+              {repositoryUrl ? (
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Badge variant="outline" className="bg-blue-50 border-blue-200">
+                      <Github className="w-3 h-3 mr-1" />
+                      Current Repository
+                    </Badge>
+                    <span className="text-sm text-gray-600">{repositoryUrl}</span>
+                  </div>
+                  <Button 
+                    onClick={handleIngestRepository}
+                    disabled={isIngesting}
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                  >
+                    {isIngesting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Analyzing Repository...
+                      </>
+                    ) : (
+                      <>
+                        <Brain className="w-4 h-4 mr-2" />
+                        Analyze Repository for AI Chat
+                      </>
+                    )}
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex space-x-2">
+                  <Input
+                    placeholder="https://github.com/octocat/Hello-World"
+                    value={repoUrl}
+                    onChange={(e) => {
+                      setRepoUrl(e.target.value);
+                      setError('');
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleKeyPress(e as any);
+                      }
+                    }}
+                    className="flex-1"
+                    disabled={isIngesting}
+                  />
+                  <Button 
+                    onClick={handleIngestRepository}
+                    disabled={isIngesting || !repoUrl.trim()}
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                  >
+                    {isIngesting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Ingesting...
+                      </>
+                    ) : (
+                      <>
+                        <Brain className="w-4 h-4 mr-2" />
+                        Analyze Repository
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
               
               {error && (
                 <div className="flex items-center space-x-2 text-red-600">
@@ -254,15 +297,17 @@ export const RAGChatbot = ({ className }: RAGChatbotProps) => {
                 </div>
               )}
               
-              <div className="text-sm text-gray-600">
-                <p className="mb-2">Enter a GitHub repository URL to start an intelligent conversation about the codebase.</p>
-                <div className="text-xs space-y-1">
-                  <p><strong>Recommended for testing:</strong></p>
-                  <p>• https://github.com/octocat/Hello-World (simple)</p>
-                  <p>• https://github.com/vercel/next.js (larger project)</p>
-                  <p>• https://github.com/facebook/create-react-app</p>
+              {!repositoryUrl && (
+                <div className="text-sm text-gray-600">
+                  <p className="mb-2">Enter a GitHub repository URL to start an intelligent conversation about the codebase.</p>
+                  <div className="text-xs space-y-1">
+                    <p><strong>Recommended for testing:</strong></p>
+                    <p>• https://github.com/octocat/Hello-World (simple)</p>
+                    <p>• https://github.com/vercel/next.js (larger project)</p>
+                    <p>• https://github.com/facebook/create-react-app</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </CardHeader>

@@ -390,7 +390,7 @@ const Index = () => {
                     </Card>
 
                     {/* RAG Chatbot */}
-                    <RAGChatbot />
+                    <RAGChatbot repositoryUrl={currentRepository?.url} />
                   </div>
                 </TabsContent>
 
