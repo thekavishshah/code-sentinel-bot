@@ -1,128 +1,269 @@
-# Code Sentinel Bot
+# 🛡️ Code Sentinel
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-1.0.0-green.svg)
-![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-ff69b4)
+  An intelligent AI-powered GitHub repository security analyzer that
+  provides comprehensive pull request analysis, risk assessment, and
+  real-time security monitoring.
 
-A modern web application for code analysis and monitoring, built with React and TypeScript.
+  ## ✨ Features
 
-## 📋 Table of Contents
+  ### 🔍 Repository Analysis
+  - **GitHub Integration**: Seamlessly analyze any public GitHub
+  repository
+  - **Pull Request Analysis**: Deep dive into PR changes with
+  AI-powered insights
+  - **Risk Assessment**: Automated security risk scoring for each pull
+   request
+  - **Security Scanning**: Comprehensive security vulnerability
+  detection
 
-- [Features](#features)
-- [Technologies](#technologies)
-- [Getting Started](#getting-started)
-- [Deployment](#deployment)
-- [Custom Domain](#custom-domain)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
+  ### 🤖 AI-Powered Intelligence
+  - **Claude AI Integration**: Advanced code analysis using
+  Anthropic's Claude
+  - **RAG Chatbot**: Context-aware repository-specific question
+  answering
+  - **Semantic Analysis**: Code similarity and pattern detection
+  - **Smart Recommendations**: Actionable security and code quality
+  suggestions
 
-## ✨ Features
+  ### 📊 Dashboard Features
+  - **Real-time Monitoring**: Live updates on repository security
+  status
+  - **Analysis History**: Track analyzed repositories and maintain
+  history
+  - **Interactive UI**: Modern, responsive interface built with React
+  - **Comprehensive Reports**: Detailed security and code quality
+  reports
 
-- Modern, responsive UI built with shadcn-ui components
-- Code analysis and monitoring capabilities
-- Real-time updates and notifications
-- Customizable dashboard views
-- Comprehensive reporting tools
+  ### 🔒 Security Focus
+  - **Vulnerability Detection**: Identify security issues in code
+  changes
+  - **Risk Scoring**: Quantified risk assessment for pull requests
+  - **Security Alerts**: Real-time notifications for security concerns
+  - **Best Practices**: Recommendations following security standards
 
-## 🛠️ Technologies
+  ## 🛠️ Technology Stack
 
-This project is built with:
+  ### Frontend
+  - **React 18** - Modern UI library with hooks
+  - **TypeScript** - Type-safe JavaScript development
+  - **Vite** - Fast build tool and development server
+  - **Tailwind CSS** - Utility-first CSS framework
+  - **shadcn/ui** - Modern component library
 
-- **[Vite](https://vitejs.dev/)** - Next generation frontend tooling
-- **[TypeScript](https://www.typescriptlang.org/)** - Typed JavaScript at any scale
-- **[React](https://reactjs.org/)** - A JavaScript library for building user interfaces
-- **[shadcn-ui](https://ui.shadcn.com/)** - Beautifully designed components
-- **[Tailwind CSS](https://tailwindcss.com/)** - A utility-first CSS framework
+  ### Backend
+  - **Node.js/Express** - Server-side runtime and framework
+  - **Supabase** - Backend-as-a-Service platform
+  - **Supabase Edge Functions** - Serverless function execution
 
-## 🚀 Getting Started
+  ### AI & APIs
+  - **Anthropic Claude** - Advanced AI for code analysis
+  - **GitHub API** - Repository and pull request data
+  - **Octokit** - GitHub API client library
 
-### Prerequisites
+  ### Development Tools
+  - **ESLint** - Code linting and quality checks
+  - **PostCSS** - CSS processing and optimization
+  - **Concurrently** - Run multiple commands simultaneously
 
-- Node.js (v16 or later)
-- npm or yarn
+  ## 🚀 Getting Started
 
-### Development Setup
+  ### Prerequisites
 
-There are several ways to set up your development environment:
+  ```bash
+  Node.js >= 16.0.0
+  npm >= 8.0.0
+  Git
+  ```
 
-#### Option 1: Use your preferred IDE
+  ### Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+  1. **Clone the repository**
+  ```bash
+  git clone https://github.com/your-username/code-sentinel-bot.git
+  cd code-sentinel-bot
+  ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL
-git clone <YOUR_GIT_URL>
+  2. **Install dependencies**
+  ```bash
+  npm install
+  ```
 
-# Step 2: Navigate to the project directory
-cd <YOUR_PROJECT_NAME>
+  3. **Environment Setup**
+  Create a `.env` file in the root directory:
+  ```env
+  VITE_CLAUDE_API_KEY=your_claude_api_key_here
+  VITE_SUPABASE_URL=your_supabase_url
+  VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+  ```
 
-# Step 3: Install the necessary dependencies
-npm install
+  4. **Start development servers**
+  ```bash
+  # Start both frontend and backend
+  npm run dev:full
 
-# Step 4: Start the development server with auto-reloading
-npm run dev
-```
+  # Or run separately
+  npm run dev      # Frontend only
+  npm run server   # Backend only
+  ```
 
-#### Option 2: Edit files directly in GitHub
+  5. **Open your browser**
+  Navigate to `http://localhost:5173` to access the application.
 
-- Navigate to the desired file(s)
-- Click the "Edit" button (pencil icon) at the top right of the file view
-- Make your changes and commit them
+  ## 📁 Project Structure
 
-#### Option 3: Use GitHub Codespaces
+  ```
+  code-sentinel-bot/
+  ├── src/
+  │   ├── components/          # React components
+  │   │   ├── ui/             # Reusable UI components
+  │   │   ├── GitHubRepoInput.tsx
+  │   │   ├── PRAnalysisCard.tsx
+  │   │   ├── RAGChatbot.tsx
+  │   │   └── ...
+  │   ├── services/           # API service functions
+  │   │   ├── githubService.ts
+  │   │   └── ragService.ts
+  │   ├── hooks/              # Custom React hooks
+  │   ├── lib/                # Utility functions
+  │   ├── pages/              # Application pages
+  │   └── types/              # TypeScript type definitions
+  ├── supabase/
+  │   └── functions/          # Supabase Edge Functions
+  │       ├── analyze-repository/
+  │       └── claude-chat/
+  ├── public/                 # Static assets
+  ├── server.js              # Express server for Claude API proxy
+  └── package.json           # Dependencies and scripts
+  ```
 
-- Navigate to the main page of your repository
-- Click on the "Code" button (green button) near the top right
-- Select the "Codespaces" tab
-- Click on "New codespace" to launch a new Codespace environment
-- Edit files directly within the Codespace and commit and push your changes
+  ## 🔧 Available Scripts
 
-## 📦 Deployment
+  ```bash
+  npm run dev          # Start Vite dev server
+  npm run build        # Build for production
+  npm run server       # Start Express server
+  npm run dev:full     # Start both frontend and backend
+  npm run lint         # Run ESLint
+  npm run preview      # Preview production build
+  ```
 
-Deploying your project is simple with Lovable:
+  ## 🔑 API Keys Setup
 
-1. Open [Lovable](https://lovable.dev/projects/9b770523-569a-4669-8169-c4d98dfb5f45)
-2. Navigate to Share -> Publish
-3. Follow the on-screen instructions to complete the deployment
+  ### Claude API Key
+  1. Visit [Anthropic Console](https://console.anthropic.com/)
+  2. Create an account and generate an API key
+  3. Add to your `.env` file as `VITE_CLAUDE_API_KEY`
 
-## 🔗 Custom Domain
+  ### Supabase Setup
+  1. Create a project at [Supabase](https://supabase.com/)
+  2. Get your project URL and anon key
+  3. Add to your `.env` file
 
-Yes, you can connect a custom domain to your Lovable project!
+  ### GitHub Token (Optional)
+  For higher rate limits, create a GitHub personal access token:
+  1. Go to GitHub Settings > Developer settings > Personal access
+  tokens
+  2. Generate a token with `public_repo` scope
+  3. Use in API requests for better rate limits
 
-To connect a domain:
-1. Navigate to Project > Settings > Domains
-2. Click "Connect Domain"
-3. Follow the instructions to set up DNS records
-4. Verify ownership and wait for DNS propagation
+  ## 🚀 Deployment
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+  ### Frontend (Vercel/Netlify)
+  1. Build the project: `npm run build`
+  2. Deploy the `dist` folder to your preferred platform
+  3. Set environment variables in your deployment platform
 
-## 📁 Project Structure
+  ### Backend (Railway/Heroku)
+  1. Deploy the Express server (`server.js`)
+  2. Set the `VITE_CLAUDE_API_KEY` environment variable
+  3. Ensure proper CORS configuration for your frontend domain
 
-```
-code-sentinel-bot/
-├── public/          # Static assets
-│   ├── components/  # UI components
-│   ├── lib/         # Utility functions
-│   ├── pages/       # Application pages
-│   ├── styles/      # Global styles
-│   ├── App.tsx      # Main application component
-│   └── main.tsx     # Entry point
-├── package.json     # Dependencies and scripts
-└── README.md        # Project documentation
-```
+  ### Supabase Functions
+  ```bash
+  # Deploy edge functions
+  supabase functions deploy analyze-repository
+  supabase functions deploy claude-chat
+  ```
 
-## 👥 Contributing
+  ## 🔒 Security Considerations
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+  - **API Keys**: Never commit API keys to version control
+  - **CORS**: Configure CORS properly for production
+  - **Rate Limiting**: Implement rate limiting for API endpoints
+  - **Input Validation**: Validate all user inputs
+  - **Environment Variables**: Use environment variables for sensitive
+   data
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+  ## 🤝 Contributing
 
-## 📄 License
+  1. **Fork the repository**
+  2. **Create a feature branch**
+     ```bash
+     git checkout -b feature/amazing-feature
+     ```
+  3. **Commit your changes**
+     ```bash
+     git commit -m 'Add some amazing feature'
+     ```
+  4. **Push to the branch**
+     ```bash
+     git push origin feature/amazing-feature
+     ```
+  5. **Open a Pull Request**
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+  ## 📖 Usage Examples
+
+  ### Analyzing a Repository
+  1. Enter a GitHub repository URL (e.g.,
+  `https://github.com/facebook/react`)
+  2. Click "Analyze Repository"
+  3. View pull requests and their security analysis
+  4. Interact with the AI chatbot for specific questions
+
+  ### Understanding Risk Scores
+  - **0-30%**: Low risk (green)
+  - **31-70%**: Medium risk (yellow)
+  - **71-100%**: High risk (red)
+
+  ## 🐛 Troubleshooting
+
+  ### Common Issues
+
+  **Claude API not working**
+  - Verify your API key is correct
+  - Check you have sufficient credits
+  - Ensure proper environment variable setup
+
+  **GitHub API rate limiting**
+  - Use a GitHub personal access token
+  - Implement caching for repeated requests
+  - Consider using GitHub Apps for higher limits
+
+  **Build errors**
+  - Clear node_modules and reinstall: `rm -rf node_modules && npm
+  install`
+  - Check Node.js version compatibility
+  - Verify all environment variables are set
+
+  ## 📄 License
+
+  This project is licensed under the MIT License - see the
+  [LICENSE](LICENSE) file for details.
+
+  ## 🙏 Acknowledgments
+
+  - [Anthropic](https://anthropic.com/) for Claude AI
+  - [Supabase](https://supabase.com/) for backend infrastructure
+  - [shadcn/ui](https://ui.shadcn.com/) for beautiful components
+  - [GitHub](https://github.com/) for the API and platform
+
+  ## 📞 Support
+
+  - Create an
+  [issue](https://github.com/your-username/code-sentinel-bot/issues)
+  for bug reports
+  - Start a [discussion](https://github.com/your-username/code-sentine
+  l-bot/discussions) for questions
+  - Follow the project for updates
+
+  ---
