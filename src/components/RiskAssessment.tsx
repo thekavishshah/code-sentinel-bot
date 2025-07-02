@@ -39,53 +39,59 @@ export const RiskAssessment = ({ pr }: RiskAssessmentProps) => {
   const getTrendIcon = (trend: string) => {
     switch (trend) {
       case 'up':
-        return <TrendingUp className="w-4 h-4 text-red-500" />;
+        return <TrendingUp className="w-4 h-4 text-red-400" />;
       case 'down':
-        return <TrendingDown className="w-4 h-4 text-green-500" />;
+        return <TrendingDown className="w-4 h-4 text-emerald-400" />;
       default:
-        return <Minus className="w-4 h-4 text-gray-500" />;
+        return <Minus className="w-4 h-4 text-gray-400" />;
     }
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-red-600';
-    if (score >= 50) return 'text-yellow-600';
-    return 'text-green-600';
+    if (score >= 80) return 'text-red-400';
+    if (score >= 50) return 'text-yellow-400';
+    return 'text-emerald-400';
   };
 
   return (
-    <Card>
+    <Card className="bg-gray-900/40 backdrop-blur-xl border-gray-700/50 shadow-2xl shadow-black/20">
       <CardHeader>
-        <CardTitle>Risk Assessment</CardTitle>
+        <CardTitle className="text-white">Risk Assessment</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
           {riskFactors.map((factor, index) => (
-            <div key={index} className="space-y-2">
+            <div key={index} className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <span className="font-medium text-sm">{factor.name}</span>
+                  <span className="font-medium text-sm text-white">{factor.name}</span>
                   {getTrendIcon(factor.trend)}
                 </div>
                 <span className={`font-semibold text-sm ${getScoreColor(factor.score)}`}>
                   {factor.score}%
                 </span>
               </div>
-              <Progress value={factor.score} className="h-2" />
-              <p className="text-xs text-gray-500">{factor.description}</p>
+              <Progress 
+                value={factor.score} 
+                className="h-3 bg-gray-800/50 [&>div]:bg-gradient-to-r [&>div]:from-cyan-500 [&>div]:to-blue-600 shadow-inner" 
+              />
+              <p className="text-xs text-gray-400">{factor.description}</p>
             </div>
           ))}
           
-          <div className="pt-4 border-t">
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-semibold">Overall Risk Score</span>
+          <div className="pt-4 border-t border-gray-700/50">
+            <div className="flex items-center justify-between mb-3">
+              <span className="font-semibold text-white">Overall Risk Score</span>
               <span className={`text-lg font-bold ${getScoreColor(pr.riskScore)}`}>
                 {pr.riskScore}%
               </span>
             </div>
-            <Progress value={pr.riskScore} className="h-3" />
-            <p className="text-xs text-gray-500 mt-2">
-              {pr.riskScore >= 80 ? 'High risk - requires careful review' : pr.riskScore >= 50 ? 'Medium risk - standard review recommended' : 'Low risk - automated merge candidate'}
+            <Progress 
+              value={pr.riskScore} 
+              className="h-4 bg-gray-800/50 [&>div]:bg-gradient-to-r [&>div]:from-cyan-500 [&>div]:to-blue-600 shadow-inner" 
+            />
+            <p className="text-xs text-gray-400 mt-3 p-3 bg-gray-800/30 rounded-lg border border-gray-700/50">
+              <span className="font-medium">Analysis Complete:</span> {pr.riskScore >= 80 ? 'High risk - requires careful review' : pr.riskScore >= 50 ? 'Medium risk - standard review recommended' : 'Low risk - automated merge candidate'}
             </p>
           </div>
         </div>

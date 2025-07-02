@@ -334,7 +334,7 @@ export const RAGChatbot = ({ className, repositoryUrl }: RAGChatbotProps) => {
                         className={`max-w-[80%] min-w-0 rounded-lg px-4 py-2 overflow-hidden ${
                           message.role === 'user'
                             ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100 text-gray-900'
+                            : 'bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-gray-100'
                         }`}
                       >
                         {message.role === 'assistant' ? (
@@ -344,7 +344,7 @@ export const RAGChatbot = ({ className, repositoryUrl }: RAGChatbotProps) => {
                               components={{
                                 code: ({ node, inline, className, children, ...props }: any) => (
                                   inline ? (
-                                    <code className="bg-gray-200 px-1 py-0.5 rounded text-sm break-words" {...props}>
+                                    <code className="bg-gray-700/50 px-1 py-0.5 rounded text-sm break-words text-cyan-300" {...props}>
                                       {children}
                                     </code>
                                   ) : (
@@ -372,7 +372,7 @@ export const RAGChatbot = ({ className, repositoryUrl }: RAGChatbotProps) => {
                           <p className="whitespace-pre-wrap break-words">{message.content}</p>
                         )}
                         <div className={`text-xs mt-2 ${
-                          message.role === 'user' ? 'text-blue-200' : 'text-gray-500'
+                          message.role === 'user' ? 'text-blue-200' : 'text-gray-400'
                         }`}>
                           {message.timestamp.toLocaleTimeString()}
                         </div>
@@ -382,10 +382,10 @@ export const RAGChatbot = ({ className, repositoryUrl }: RAGChatbotProps) => {
                   
                   {isLoading && (
                     <div className="flex justify-start">
-                      <div className="bg-gray-100 rounded-lg px-4 py-2">
+                      <div className="bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 rounded-lg px-4 py-2">
                         <div className="flex items-center space-x-2">
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span className="text-sm text-gray-600">AI is thinking...</span>
+                          <Loader2 className="w-4 h-4 animate-spin text-cyan-400" />
+                          <span className="text-sm text-gray-300">AI is thinking...</span>
                         </div>
                       </div>
                     </div>

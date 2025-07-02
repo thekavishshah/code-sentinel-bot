@@ -56,38 +56,38 @@ export const SecurityAlert = ({ issue }: SecurityAlertProps) => {
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
       case 'high':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
       case 'low':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     }
   };
 
   const Icon = getIcon(issue.type);
 
   return (
-    <Card className={`border-l-4 ${issue.severity === 'critical' || issue.severity === 'high' ? 'border-l-red-500' : issue.severity === 'medium' ? 'border-l-yellow-500' : 'border-l-blue-500'}`}>
+    <Card className={`bg-gray-900/40 backdrop-blur-xl border-gray-700/50 shadow-2xl shadow-black/20 border-l-4 ${issue.severity === 'critical' || issue.severity === 'high' ? 'border-l-red-500' : issue.severity === 'medium' ? 'border-l-yellow-500' : 'border-l-blue-500'}`}>
       <CardContent className="pt-6">
         <div className="flex items-start space-x-4">
-          <div className={`p-2 rounded-lg ${issue.severity === 'critical' || issue.severity === 'high' ? 'bg-red-100' : issue.severity === 'medium' ? 'bg-yellow-100' : 'bg-blue-100'}`}>
-            <Icon className={`w-5 h-5 ${issue.severity === 'critical' || issue.severity === 'high' ? 'text-red-600' : issue.severity === 'medium' ? 'text-yellow-600' : 'text-blue-600'}`} />
+          <div className={`p-3 rounded-xl ${issue.severity === 'critical' || issue.severity === 'high' ? 'bg-red-500/20 border border-red-500/30' : issue.severity === 'medium' ? 'bg-yellow-500/20 border border-yellow-500/30' : 'bg-blue-500/20 border border-blue-500/30'}`}>
+            <Icon className={`w-5 h-5 ${issue.severity === 'critical' || issue.severity === 'high' ? 'text-red-400' : issue.severity === 'medium' ? 'text-yellow-400' : 'text-blue-400'}`} />
           </div>
           <div className="flex-1">
-            <div className="flex items-center justify-between mb-2">
-              <h4 className="font-semibold text-gray-900">{getTitle(issue.type)}</h4>
-              <Badge className={getSeverityColor(issue.severity)}>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-semibold text-white">{getTitle(issue.type)}</h4>
+              <Badge className={`border ${getSeverityColor(issue.severity)}`}>
                 {issue.severity.toUpperCase()}
               </Badge>
             </div>
-            <p className="text-gray-600 mb-3">{getDescription(issue.type)}</p>
-            <div className="flex items-center space-x-4 text-sm text-gray-500">
-              <span>📁 {issue.file}</span>
-              <span>📍 Line {issue.line}</span>
+            <p className="text-gray-300 mb-4 leading-relaxed">{getDescription(issue.type)}</p>
+            <div className="flex items-center space-x-4 text-sm text-gray-400">
+              <span className="flex items-center">📁 {issue.file}</span>
+              <span className="flex items-center">📍 Line {issue.line}</span>
             </div>
           </div>
         </div>

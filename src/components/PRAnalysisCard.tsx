@@ -36,51 +36,52 @@ export const PRAnalysisCard = ({ pr }: PRAnalysisCardProps) => {
     }
   ];
 
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'passed':
+        return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+      case 'warning':
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'failed':
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
+      default:
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+    }
+  };
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'passed':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
+        return <CheckCircle className="w-4 h-4 text-emerald-400" />;
       case 'warning':
-        return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
+        return <AlertTriangle className="w-4 h-4 text-yellow-400" />;
       case 'failed':
-        return <X className="w-4 h-4 text-red-500" />;
+        return <X className="w-4 h-4 text-red-400" />;
       default:
         return null;
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'passed':
-        return 'bg-green-100 text-green-800';
-      case 'warning':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'failed':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   return (
-    <Card>
+    <Card className="bg-gray-900/40 backdrop-blur-xl border-gray-700/50 shadow-2xl shadow-black/20">
       <CardHeader>
-        <CardTitle>Analysis Results</CardTitle>
+        <CardTitle className="text-white">Analysis Results</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {checkItems.map((item, index) => (
-            <div key={index} className="flex items-center justify-between p-3 rounded-lg border border-gray-100">
+            <div key={index} className="flex items-center justify-between p-4 rounded-xl border border-gray-700/50 bg-gray-800/30 hover:bg-gray-700/30 transition-all duration-300">
               <div className="flex items-center space-x-3">
-                <item.icon className="w-5 h-5 text-gray-600" />
+                <item.icon className="w-5 h-5 text-gray-400" />
                 <div>
-                  <p className="font-medium text-sm">{item.label}</p>
-                  <p className="text-xs text-gray-500">{item.detail}</p>
+                  <p className="font-medium text-sm text-white">{item.label}</p>
+                  <p className="text-xs text-gray-400">{item.detail}</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
                 {getStatusIcon(item.status)}
-                <Badge className={`text-xs ${getStatusColor(item.status)}`}>
+                <Badge className={`text-xs border ${getStatusColor(item.status)}`}>
                   {item.status}
                 </Badge>
               </div>

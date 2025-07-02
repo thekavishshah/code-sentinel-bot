@@ -77,15 +77,15 @@ export const GitHubRepoInput = ({ onRepositoryAnalyzed }: GitHubRepoInputProps) 
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-gray-900/40 backdrop-blur-xl border-gray-700/50 shadow-2xl shadow-black/20">
       <CardHeader>
-        <CardTitle className="flex items-center">
-          <Github className="w-5 h-5 mr-2" />
+        <CardTitle className="flex items-center text-white">
+          <Github className="w-6 h-6 mr-3 text-cyan-400" />
           Real-Time GitHub Repository Analysis
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex space-x-2">
+      <CardContent className="space-y-6">
+        <div className="flex space-x-3">
           <Input
             placeholder="https://github.com/facebook/react"
             value={repoUrl}
@@ -93,13 +93,13 @@ export const GitHubRepoInput = ({ onRepositoryAnalyzed }: GitHubRepoInputProps) 
               setRepoUrl(e.target.value);
               setError('');
             }}
-            className="flex-1"
+            className="flex-1 bg-gray-800/50 border-gray-600/50 text-white placeholder:text-gray-400 focus:border-cyan-500/50 focus:ring-cyan-500/25"
             disabled={isAnalyzing}
           />
           <Button 
             onClick={analyzeRepository}
             disabled={isAnalyzing || !repoUrl.trim()}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+            className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/25 transition-all duration-300 hover:shadow-cyan-500/40 hover:scale-105 px-6"
           >
             {isAnalyzing ? (
               <>
@@ -116,35 +116,35 @@ export const GitHubRepoInput = ({ onRepositoryAnalyzed }: GitHubRepoInputProps) 
         </div>
         
         {error && (
-          <div className="flex items-center space-x-2 text-red-600">
-            <AlertCircle className="w-4 h-4" />
-            <span className="text-sm">{error}</span>
+          <div className="flex items-center space-x-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+            <AlertCircle className="w-4 h-4 text-red-400" />
+            <span className="text-sm text-red-300">{error}</span>
           </div>
         )}
 
-        <div className="text-sm text-gray-600">
-          <p className="mb-3">Enter any public GitHub repository URL to perform real-time AI-powered security analysis of its pull requests.</p>
-          <div className="flex flex-wrap gap-2 mb-3">
-            <Badge variant="outline" className="text-xs bg-green-50 border-green-200">
+        <div className="text-sm">
+          <p className="mb-4 text-gray-300 leading-relaxed">Enter any public GitHub repository URL to perform real-time AI-powered security analysis of its pull requests.</p>
+          <div className="flex flex-wrap gap-3 mb-4">
+            <Badge variant="outline" className="text-xs bg-emerald-500/20 text-emerald-400 border-emerald-500/30 shadow-lg shadow-emerald-500/10">
               <CheckCircle className="w-3 h-3 mr-1" />
               Live GitHub API
             </Badge>
-            <Badge variant="outline" className="text-xs bg-blue-50 border-blue-200">
+            <Badge variant="outline" className="text-xs bg-blue-500/20 text-blue-400 border-blue-500/30 shadow-lg shadow-blue-500/10">
               <CheckCircle className="w-3 h-3 mr-1" />
               Claude AI Analysis
             </Badge>
-            <Badge variant="outline" className="text-xs bg-purple-50 border-purple-200">
+            <Badge variant="outline" className="text-xs bg-purple-500/20 text-purple-400 border-purple-500/30 shadow-lg shadow-purple-500/10">
               <CheckCircle className="w-3 h-3 mr-1" />
               Real Security Scanning
             </Badge>
           </div>
-          <div className="text-xs text-gray-500 space-y-1">
-            <p className="flex items-center">
-              <ExternalLink className="w-3 h-3 mr-1" />
+          <div className="text-xs space-y-2">
+            <p className="flex items-center text-gray-400 hover:text-cyan-400 transition-colors cursor-pointer">
+              <ExternalLink className="w-3 h-3 mr-2" />
               Try: https://github.com/facebook/react
             </p>
-            <p className="flex items-center">
-              <ExternalLink className="w-3 h-3 mr-1" />
+            <p className="flex items-center text-gray-400 hover:text-cyan-400 transition-colors cursor-pointer">
+              <ExternalLink className="w-3 h-3 mr-2" />
               Try: https://github.com/microsoft/vscode
             </p>
           </div>
